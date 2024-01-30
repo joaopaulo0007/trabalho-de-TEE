@@ -65,6 +65,12 @@ dano_potencial_regiao = arquivo.groupby(['Região', 'Dano Potencial Associado - 
 
 dano_potencial_regiao.to_excel("dano potencial por regiao.xlsx",index=False, engine='openpyxl')
 
+nivel_emergencia_região=arquivo.groupby(['Região','Nível de Emergência']).size().reset_index(name='Quantidade de usinas por nível de emergência região')
+nivel_emergencia_região.to_excel('nivel_emergencia_região.xlsx',index=False, engine='openpyxl')
+
+dano_potencial_por_nivel_de_emergencia=arquivo.groupby(['Nível de Emergência','Dano Potencial Associado - DPA']).size().reset_index(name='número de usinas')
+dano_potencial_por_nivel_de_emergencia.to_excel('dano_potencial_por_nivel_de_emergencia.xlsx',index=False,engine='openpyxl')
+
 plt.bar(
     arquivo_dano_potencial_counts["Dano Potencial Associado - DPA"],
     arquivo_dano_potencial_counts["Número de Barragens"],
@@ -93,7 +99,7 @@ plt.bar(
 plt.xlabel("Tipo de Barragem de Mineração")
 plt.ylabel("Número de Barragens")
 plt.title("Número de Barragens por Tipo de Barragem")
-plt.xticks(rotation=90, ha="right")
+
 plt.tight_layout()
 plt.savefig("tipo_barragem_plot.png")
 plt.show()
@@ -125,9 +131,7 @@ plt.pie(
 )
 plt.axis("equal")
 plt.title("Distribuição de Barragens por Tipo de Minério")
-plt.legend(
-    title="Tipos de Minério", bbox_to_anchor=(1, 0.5), loc="center left", fontsize=8
-)
+
 plt.savefig("tipo minerio.png")
 plt.show()
 
@@ -167,9 +171,6 @@ plt.bar(
     color=cores
 )
 
-legendas = [plt.Rectangle((0,0),1,1, color=cores_regioes[regiao], edgecolor='none') for regiao in cores_regioes]
-plt.legend(legendas, cores_regioes.keys(), title='Região')
-
 plt.xlabel("Região - Dano Potencial")
 plt.ylabel("Número de Barragens")
 plt.title("Quantidade de usinas com dano potencial por região")
@@ -178,3 +179,28 @@ plt.tight_layout()
 plt.savefig("Quantidade de usinas com dano potencial por região.png")
 plt.show()
 
+cores = nivel_emergencia_região['Região'].map(cores_regioes)
+plt.bar(
+    nivel_emergencia_região['Região']+'-'+nivel_emergencia_região['Nível de Emergência'],
+    nivel_emergencia_região['Quantidade de usinas por nível de emergência região'],
+    color=cores
+)
+plt.xlabel("Região - nivel de emrgência")
+plt.ylabel("Número de Barragens")
+plt.title("Quantidade de usinas por nivel emergencial por região")
+plt.xticks(rotation=90, ha="right")
+plt.tight_layout()
+plt.savefig("Quantidade de usinas por nivel emergencial por região.png")
+plt.show()
+
+plt.bar(
+    dano_potencial_por_nivel_de_emergencia['Nível de Emergência']+'-'+dano_potencial_por_nivel_de_emergencia["Dano Potencial Associado - DPA"],
+    dano_potencial_por_nivel_de_emergencia['número de usinas']
+)
+plt.xlabel("Região - nivel de emrgência")
+plt.ylabel("Número de Barragens")
+plt.title("Quantidade de usinas por nivel emergencial por dano potencial")
+plt.xticks(rotation=90, ha="right")
+plt.tight_layout()
+plt.savefig("Quantidade de usinas por nivel emergencial por dano potencial.png")
+plt.show()
